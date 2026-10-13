@@ -91,7 +91,9 @@ Effectué dans le sandbox :
 - validation XML du schéma Xcode et du manifeste de confidentialité ;
 - vérification des références de fichiers du projet.
 
-**Non effectué :** compilation avec le SDK iOS, contrôle des types par le compilateur Swift, lancement sur simulateur/iPhone, profilage mémoire ou signature Apple. La validation syntaxique ne garantit pas une compilation réussie. Des ajustements peuvent rester nécessaires lors du premier build Xcode.
+**Compilation confirmée sur GitHub Actions** : le run [38431921205](https://github.com/ilary23/Mihon/actions/runs/38431921205) a terminé avec succès les builds simulateur et iPhone. Le code a donc été compilé avec le SDK iOS et vérifié par le compilateur Swift.
+
+**Non effectué :** lancement sur simulateur/iPhone, profilage mémoire ou signature Apple. La réussite du build ne remplace pas les tests sur appareil.
 
 Sur Mac, pour vérifier une compilation simulateur sans signature :
 
@@ -111,8 +113,8 @@ Le workflow `.github/workflows/ios-build.yml` se lance à chaque push sur `main`
 Sur un runner macOS, il compile :
 
 1. une application pour le simulateur iOS ;
-2. une application native iPhone **non signée**.
+2. une application native iPhone **non signée**, empaquetée dans `MihonReader-UNSIGNED.ipa`.
 
-Les ZIP et journaux sont conservés pendant 14 jours dans les artifacts de l’exécution. **Le ZIP iPhone non signé n’est pas directement installable.** Une signature Apple et un profil de provisionnement restent indispensables. Le workflow ne contient aucun token GitHub personnel ni secret Apple.
+L’IPA, le ZIP simulateur et les journaux sont conservés pendant 14 jours dans les artifacts de l’exécution. **L’IPA non signé n’est pas directement installable.** Sur Windows, Sideloadly peut le signer avec ton compte Apple et l’installer : voir [INSTALLER-WINDOWS.md](INSTALLER-WINDOWS.md). Le workflow ne contient aucun token GitHub personnel ni secret Apple.
 
 Pour l’iPhone 12 sous iOS 27, vérifier également avec un Xcode/SDK adapté à cette version : le runner macOS fourni n’est pas une garantie de compatibilité avec ce système.

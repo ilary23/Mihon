@@ -57,9 +57,10 @@ jobs:
             -derivedDataPath DerivedData/iPhone \
             CODE_SIGNING_ALLOWED=NO \
             build 2>&1 | tee artifacts/iphone-build.log
-          ditto -c -k --keepParent \
-            DerivedData/iPhone/Build/Products/Release-iphoneos/MihonReader.app \
-            artifacts/MihonReader-iPhone-UNSIGNED.zip
+          mkdir -p packaging/Payload
+          cp -R DerivedData/iPhone/Build/Products/Release-iphoneos/MihonReader.app packaging/Payload/
+          (cd packaging && zip -qry ../artifacts/MihonReader-UNSIGNED.ipa Payload)
+          shasum -a 256 artifacts/MihonReader-UNSIGNED.ipa > artifacts/MihonReader-UNSIGNED.ipa.sha256
 
       - name: Explain installation requirements
         if: success()
@@ -67,8 +68,10 @@ jobs:
           cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
           ## Native iPhone app compiled
           - Simulator ZIP: runs in a compatible Xcode iOS Simulator, not on an iPhone.
-          - iPhone UNSIGNED ZIP: native device build, **not directly installable**.
-          - A signed IPA requires an Apple certificate and provisioning profile, or local signing with Xcode.
+          - MihonReader-UNSIGNED.ipa: native iPhone build packaged for local signing, **not directly installable**.
+          - On Windows, sign and install the IPA with Sideloadly using your own Apple account.
+          - With a free Apple account, signing normally needs renewal every 7 days.
+          - Do not upload Apple passwords or signing certificates to the repository.
           - No Apple signing credentials are included in this repository.
           - Build success does not replace UI tests on iPhone 12 and the actual installed iOS version.
           EOF
